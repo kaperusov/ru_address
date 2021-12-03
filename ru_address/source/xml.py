@@ -158,12 +158,13 @@ class DataHandler(sax.ContentHandler):
 
 
 class Definition:
-    def __init__(self, table_name, source_file):
+    def __init__(self, table_name, source_file, target):
         self.table_name = table_name
         self.tree = et.parse(source_file)
-        self.stylesheet_file = os.path.join(package_directory, 'resources', 'definition.xsl')
+        self.stylesheet_file = os.path.join(package_directory, 'resources', target, 'definition.xsl')
         self.table_fields = self._fetch_table_fields()
         self.entity_tag = self._fetch_entity_tag()
+        self.target = target
 
     def _fetch_table_fields(self):
         table_fields = []
@@ -191,7 +192,7 @@ class Definition:
         transform = et.XSLT(stylesheet)
 
         plain_table_name = transform.strparam(self.table_name)
-        index = transform.strparam(Index().build(self.table_name))
+        index = transform.strparam(Index(self.target).build(self.table_name))
         result = transform(self.tree, table_name=plain_table_name, index=index)
 
         dump_file.write(str(result))

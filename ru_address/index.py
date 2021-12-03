@@ -4,9 +4,9 @@ from ru_address import package_directory
 
 
 class Index:
-    def __init__(self):
-        self.stylesheet_file = os.path.join(package_directory, 'resources', 'index.xsl')
-        self.index_file = os.path.join(package_directory, 'resources', 'index.xml')
+    def __init__(self, target):
+        self.stylesheet_file = os.path.join(package_directory, 'resources', target, 'index.xsl')
+        self.index_file = os.path.join(package_directory, 'resources', target, 'index.xml')
         self.index_tree = et.parse(self.index_file)
 
     def build(self, table_name):

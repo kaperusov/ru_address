@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<database>
+    <table id="ACTSTAT">
+        <primary-key field="ACTSTATID"/>
+    </table>
+    <table id="ADDR_OBJ">
+        <primary-key field="AOID"/>
+        <key field="ACTSTATUS"/>
+        <key field="CENTSTATUS"/>
+        <key field="OPERSTATUS"/>
+        <key field="CURRSTATUS"/>
+        <key field="NORMDOC"/>
+        <key field="AOLEVEL"/>
+    </table>
+    <table id="CENTERST">
+        <primary-key field="CENTERSTID"/>
+    </table>
+    <table id="CURENTST">
+        <primary-key field="CURENTSTID"/>
+    </table>
+    <table id="ESTSTAT">
+        <primary-key field="ESTSTATID"/>
+    </table>
+	<table id="HOUSE">
+        <primary-key field="HOUSEID"/>
+		<key field="ESTSTATUS" />
+		<key field="NORMDOC" />
+		<key field="STATSTATUS" />
+		<key field="STRSTATUS" />
+    </table>
+    <table id="HOUSEINT">
+        <primary-key field="HOUSEINTID"/>
+        <key field="INTSTATUS"/>
+		<key field="NORMDOC"/>
+    </table>
+    <table id="HSTSTAT">
+        <primary-key field="HOUSESTID"/>
+    </table>
+    <table id="INTVSTAT">
+        <primary-key field="INTVSTATID"/>
+    </table>
+    <table id="LANDMARK">
+        <primary-key field="LANDID"/>
+		<key field="NORMDOC"/>
+    </table>
+    <table id="NDOCTYPE">
+        <primary-key field="NDTYPEID"/>
+    </table>
+    <table id="NORMDOC">
+        <primary-key field="NORMDOCID"/>
+        <key field="DOCTYPE"/>
+    </table>
+    <table id="OPERSTAT">
+        <primary-key field="OPERSTATID"/>
+    </table>
+    <table id="SOCRBASE">
+        <key field="SCNAME"/>
+    </table>
+	<table id="STRSTAT">
+        <primary-key field="STRSTATID"/>
+    </table>
+</database>
