@@ -68,3 +68,7 @@ target/
 
 __trash/
 test.py
+
+# Output files
+fias/*.xsd
+**/*.sql
