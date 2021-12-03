@@ -13,7 +13,7 @@ class Converter:
 
     TABLE_LIST = [
         'ACTSTAT',
-        'ADDROBJ',
+        'ADDR_OBJ',
         'CENTERST',
         'CURENTST',
         'ESTSTAT',

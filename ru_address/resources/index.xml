@@ -3,7 +3,7 @@
     <table id="ACTSTAT">
         <primary-key field="ACTSTATID"/>
     </table>
-    <table id="ADDROBJ">
+    <table id="ADDR_OBJ">
         <primary-key field="AOID"/>
         <key field="ACTSTATUS"/>
         <key field="CENTSTATUS"/>
