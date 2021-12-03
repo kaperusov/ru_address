@@ -7,27 +7,16 @@
     <xsl:param name="index" />
     
     <xsl:template match="/">
-        <xsl:text>DROP TABLE IF EXISTS `</xsl:text><xsl:value-of select="$table_name"/><xsl:text>`;&#xa;</xsl:text>
-        <xsl:text>CREATE TABLE `</xsl:text><xsl:value-of select="$table_name"/><xsl:text>` (&#xa;</xsl:text>
+        <xsl:text>DROP TABLE IF EXISTS </xsl:text><xsl:value-of select="$table_name"/><xsl:text>;&#xa;</xsl:text>
+        <xsl:text>CREATE TABLE </xsl:text><xsl:value-of select="$table_name"/><xsl:text> (&#xa;</xsl:text>
         <xsl:for-each select="/xs:schema/xs:element[1]/xs:complexType[1]/xs:sequence[1]/xs:element[1]/xs:complexType[1]/xs:attribute" >
             <!-- Column -->
-            <xsl:text>  `</xsl:text><xsl:value-of select="normalize-space(@name)"/><xsl:text>` </xsl:text>
+            <xsl:text>  </xsl:text><xsl:value-of select="normalize-space(@name)"/><xsl:text> </xsl:text>
 
             <!-- Column Type -->
             <xsl:choose>
                 <xsl:when test="xs:simpleType/xs:restriction/@base='xs:integer' or xs:simpleType/xs:restriction/@base='xs:int'">
-                    <xsl:text>INT(</xsl:text>
-
-                    <xsl:choose>
-                        <xsl:when test="xs:simpleType/xs:restriction/xs:totalDigits/@value">
-                            <xsl:value-of select="xs:simpleType/xs:restriction/xs:totalDigits/@value" />
-                        </xsl:when>
-                        <xsl:otherwise>
-                             <xsl:text>11</xsl:text>
-                        </xsl:otherwise>
-                    </xsl:choose>
-
-                    <xsl:text>)</xsl:text>
+                    <xsl:text>INTEGER</xsl:text>
                 </xsl:when>
                 <xsl:when test="xs:simpleType/xs:restriction/@base='xs:byte'">INT(1)</xsl:when>
                 <xsl:when test="xs:simpleType/xs:restriction/@base='xs:string'"><xsl:text>VARCHAR(</xsl:text>
@@ -79,11 +68,11 @@
         </xsl:for-each>
 
         <!-- End of column definitions -->
-        <xsl:text>&#xa;) ENGINE = MyISAM </xsl:text>
+        <xsl:text>&#xa;);&#xa;</xsl:text>
 
         <!-- Table comment -->
         <xsl:if test="/xs:schema/xs:element[1]/xs:annotation/xs:documentation">
-            <xsl:text>COMMENT=</xsl:text>
+            <xsl:text>COMMENT ON TABLE IS </xsl:text>
             <xsl:text>'</xsl:text><xsl:value-of select="/xs:schema/xs:element[1]/xs:annotation/xs:documentation"/><xsl:text>'</xsl:text>
         </xsl:if>
 
