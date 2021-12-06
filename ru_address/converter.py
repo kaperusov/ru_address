@@ -100,25 +100,32 @@ class Converter:
         return header.format(__version__, str(now))
 
     @staticmethod
-    def get_dump_header(encoding):
+    def get_dump_header(target, encoding):
         """ Подготовка к импорту """
-        header = ("/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;\n"
-                  "/*!40101 SET NAMES {} */;\n"
-                  "/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;\n"
-                  "/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;\n")
-        return header.format(encoding)
+        if target == Converter.TARGET_MYSQL:
+            header = ("/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;\n"
+                      "/*!40101 SET NAMES {} */;\n"
+                      "/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;\n"
+                      "/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;\n")
+            return header.format(encoding)
+        elif target == Converter.TARGET_POSTGRES:
+            return ""
 
     @staticmethod
-    def get_dump_footer():
+    def get_dump_footer(target):
         """ Завершение импорта """
-        footer = ("\n/*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;\n"
-                  "/*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;\n"
-                  "/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;")
-        return footer
+        if target == Converter.TARGET_MYSQL:
+            footer = ("\n/*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;\n"
+                      "/*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;\n"
+                      "/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;")
+            return footer
+        elif target == Converter.TARGET_POSTGRES:
+            return ""
 
     @staticmethod
     def get_table_separator(table):
-        return ("\n\n-- Table `{}`\n").format(table)
+        return "\n\n-- Table `{}`\n".format(table)
+
 
 class Output:
     SINGLE_FILE = 0
