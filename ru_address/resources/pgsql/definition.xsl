@@ -4,8 +4,7 @@
     
     <!-- From XSLT processor -->
     <xsl:param name="table_name" />
-    <xsl:param name="index" />
-    
+
     <xsl:template match="/">
         <xsl:text>DROP TABLE IF EXISTS </xsl:text><xsl:value-of select="$table_name"/><xsl:text>;&#xa;</xsl:text>
         <xsl:text>CREATE TABLE </xsl:text><xsl:value-of select="$table_name"/><xsl:text> (&#xa;</xsl:text>
@@ -18,7 +17,8 @@
                 <xsl:when test="xs:simpleType/xs:restriction/@base='xs:integer' or xs:simpleType/xs:restriction/@base='xs:int'">
                     <xsl:text>INTEGER</xsl:text>
                 </xsl:when>
-                <xsl:when test="xs:simpleType/xs:restriction/@base='xs:byte'">INT(1)</xsl:when>
+                <xsl:when test="@name='ID'">BIGSERIAL</xsl:when>
+                <xsl:when test="xs:simpleType/xs:restriction/@base='xs:byte'">SMALLINT</xsl:when>
                 <xsl:when test="xs:simpleType/xs:restriction/@base='xs:string'"><xsl:text>VARCHAR(</xsl:text>
 
                     <xsl:choose>
@@ -33,6 +33,7 @@
 
                     <xsl:text>)</xsl:text></xsl:when>
                 <xsl:when test="@type='xs:date'">DATE</xsl:when>
+                <xsl:when test="xs:simpleType/xs:restriction/@base='xs:long'">INT8</xsl:when>
             </xsl:choose>
 
             <!-- Column required -->
@@ -41,22 +42,9 @@
                     <xsl:text> NOT NULL</xsl:text>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:text> NULL DEFAULT NULL</xsl:text>
+                    <xsl:text> DEFAULT NULL</xsl:text>
                 </xsl:otherwise>
             </xsl:choose>
-
-            <!-- Column comment -->
-            <xsl:if test="xs:annotation/xs:documentation">
-                <xsl:text> COMMENT </xsl:text>
-                <xsl:choose>
-                    <xsl:when test="contains(xs:annotation/xs:documentation,'&#xa;')">
-                        <xsl:text>'</xsl:text><xsl:value-of select="substring-before(xs:annotation/xs:documentation,'&#xa;')"/><xsl:text>'</xsl:text>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:text>'</xsl:text><xsl:value-of select="xs:annotation/xs:documentation"/><xsl:text>'</xsl:text>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:if>
 
             <!-- Columns separator -->
             <xsl:choose>
@@ -68,17 +56,37 @@
         </xsl:for-each>
 
         <!-- End of column definitions -->
-        <xsl:text>&#xa;);&#xa;</xsl:text>
+        <xsl:text>;</xsl:text>
 
         <!-- Table comment -->
         <xsl:if test="/xs:schema/xs:element[1]/xs:annotation/xs:documentation">
-            <xsl:text>COMMENT ON TABLE IS </xsl:text>
-            <xsl:text>'</xsl:text><xsl:value-of select="/xs:schema/xs:element[1]/xs:annotation/xs:documentation"/><xsl:text>'</xsl:text>
+            <xsl:text> &#xa;  COMMENT ON TABLE </xsl:text> <xsl:value-of select="$table_name"/>
+            <xsl:text> IS '</xsl:text><xsl:value-of select="/xs:schema/xs:element[1]/xs:annotation/xs:documentation"/><xsl:text>'</xsl:text>
         </xsl:if>
 
         <xsl:text>; &#xa;</xsl:text>
 
+        <!-- Column comment -->
+        <xsl:for-each select="/xs:schema/xs:element[1]/xs:complexType[1]/xs:sequence[1]/xs:element[1]/xs:complexType[1]/xs:attribute" >
+            <xsl:if test="xs:annotation/xs:documentation">
+            <xsl:text>  COMMENT ON COLUMN </xsl:text> <xsl:value-of select="$table_name"/> <xsl:text>.</xsl:text><xsl:value-of select="normalize-space(@name)"/><xsl:text> IS </xsl:text>
+            <xsl:choose>
+                    <xsl:when test="contains(xs:annotation/xs:documentation,'&#xa;')">
+                        <xsl:text>'</xsl:text><xsl:value-of select="substring-before(xs:annotation/xs:documentation,'&#xa;')"/><xsl:text>'</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>'</xsl:text><xsl:value-of select="xs:annotation/xs:documentation"/><xsl:text>'</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose>
+                <xsl:text>; &#xa;</xsl:text>
+        </xsl:if>
+         </xsl:for-each>
+
         <!-- separate table definitions -->
         <xsl:text>&#xa;</xsl:text>
     </xsl:template>
+
+    <xsl:template name="create_index">
+
+            </xsl:template>
 </xsl:stylesheet>

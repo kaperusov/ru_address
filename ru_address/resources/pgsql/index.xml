@@ -4,13 +4,13 @@
         <primary-key field="ACTSTATID"/>
     </table>
     <table id="ADDR_OBJ">
-        <primary-key field="AOID"/>
-        <key field="ACTSTATUS"/>
-        <key field="CENTSTATUS"/>
-        <key field="OPERSTATUS"/>
-        <key field="CURRSTATUS"/>
-        <key field="NORMDOC"/>
-        <key field="AOLEVEL"/>
+        <primary-key field="ID"/>
+        <key field="OBJECTID"/>
+        <key field="OBJECTGUID"/>
+        <key field="CHANGEID"/>
+        <key field="OPERTYPEID"/>
+        <key field="PREVID"/>
+        <key field="LEVEL"/>
     </table>
     <table id="CENTERST">
         <primary-key field="CENTERSTID"/>
@@ -20,6 +20,9 @@
     </table>
     <table id="ESTSTAT">
         <primary-key field="ESTSTATID"/>
+    </table>
+    <table id="FLATTYPE">
+        <primary-key field="FLTYPEID"/>
     </table>
 	<table id="HOUSE">
         <primary-key field="HOUSEID"/>
@@ -53,8 +56,18 @@
     <table id="OPERSTAT">
         <primary-key field="OPERSTATID"/>
     </table>
+    <table id="ROOMTYPE">
+        <primary-key field="RMTYPEID"/>
+    </table>
+     <table id="ROOM">
+        <primary-key field="ROOMGUID"/>
+    </table>
     <table id="SOCRBASE">
+         <primary-key field="KOD_T_ST"/>
         <key field="SCNAME"/>
+    </table>
+    <table id="STEAD">
+        <primary-key field="STEADID"/>
     </table>
 	<table id="STRSTAT">
         <primary-key field="STRSTATID"/>
