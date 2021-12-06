@@ -51,19 +51,19 @@ class Converter:
         else:
             raise FileNotFoundError('Not found source file: {}'.format(file_path))
 
-    def convert_table(self, file, table, target, skip_definition, skip_data, batch_size):
+    def convert_table(self, file, schema, table, target, skip_definition, skip_data, batch_size):
         """ Конвертирует схему и данные таблицы, используя соответствующие XSD и XML файлы. """
         if self.source == self.SOURCE_XML:
-            self._convert_table_xml(file, table, target, skip_definition, skip_data, batch_size)
+            self._convert_table_xml(file, schema, table, target, skip_definition, skip_data, batch_size)
         elif self.source == self.SOURCE_DBF:
-            self._convert_table_dbf(file, table, target, skip_definition, skip_data, batch_size)
+            self._convert_table_dbf(file, schema, table, target, skip_definition, skip_data, batch_size)
 
-    def _convert_table_xml(self, file, table, target, skip_definition, skip_data, batch_size):
+    def _convert_table_xml(self, file, schema, table, target, skip_definition, skip_data, batch_size):
         """ Конвертирует схему и данные таблицы, используя соответствующие XSD и XML файлы. """
         dump_file = file
 
         source_filepath = self.get_source_filepath(table, 'xsd')
-        definition = Definition(table, source_filepath, target)
+        definition = Definition(schema, table, source_filepath, target)
         if skip_definition is False:
             definition.convert_and_dump(dump_file)
 
@@ -75,7 +75,7 @@ class Converter:
             else:
                 data.convert_and_dump(dump_file, definition, batch_size)
 
-    def _convert_table_dbf(self, table, target, skip_definition, skip_data, batch_size):
+    def _convert_table_dbf(self, schema, table, target, skip_definition, skip_data, batch_size):
         """ Конвертирует схему и данные таблицы, используя соответствующие XSD и DBF файлы. """
         print('TODO!')
 
