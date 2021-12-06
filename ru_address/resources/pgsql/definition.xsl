@@ -6,11 +6,16 @@
     <xsl:param name="table_name" />
 
     <xsl:template match="/">
+<<<<<<< HEAD
         <xsl:text>DROP TABLE IF EXISTS </xsl:text><xsl:value-of select="$table_name"/><xsl:text> CASCADE;&#xa;</xsl:text>
         <xsl:text>CREATE TABLE </xsl:text><xsl:value-of select="$table_name"/><xsl:text> (&#xa;</xsl:text>
+=======
+        <xsl:text>DROP TABLE IF EXISTS "</xsl:text><xsl:value-of select="$schema"/><xsl:text>"."</xsl:text><xsl:value-of select="$table_name"/><xsl:text>";&#xa;</xsl:text>
+        <xsl:text>CREATE TABLE "</xsl:text><xsl:value-of select="$schema"/><xsl:text>"."</xsl:text><xsl:value-of select="$table_name"/><xsl:text>" (&#xa;</xsl:text>
+>>>>>>> fff7227e693e0ddd252a9e4ae421bac6013924cc
         <xsl:for-each select="/xs:schema/xs:element[1]/xs:complexType[1]/xs:sequence[1]/xs:element[1]/xs:complexType[1]/xs:attribute" >
             <!-- Column -->
-            <xsl:text>  </xsl:text><xsl:value-of select="normalize-space(@name)"/><xsl:text> </xsl:text>
+            <xsl:text>  </xsl:text>"<xsl:value-of select="normalize-space(@name)"/><xsl:text>" </xsl:text>
 
             <!-- Column Type -->
             <xsl:choose>
@@ -56,12 +61,12 @@
         </xsl:for-each>
 
         <!-- End of column definitions -->
-        <xsl:text>;</xsl:text>
+        <xsl:text>; &#xa;</xsl:text>
 
         <!-- Table comment -->
         <xsl:if test="/xs:schema/xs:element[1]/xs:annotation/xs:documentation">
-            <xsl:text> &#xa;  COMMENT ON TABLE </xsl:text> <xsl:value-of select="$table_name"/>
-            <xsl:text> IS '</xsl:text><xsl:value-of select="/xs:schema/xs:element[1]/xs:annotation/xs:documentation"/><xsl:text>'</xsl:text>
+            <xsl:text> &#xa;  COMMENT ON TABLE "</xsl:text><xsl:value-of select="$schema"/><xsl:text>"."</xsl:text><xsl:value-of select="$table_name"/>
+            <xsl:text>" IS '</xsl:text><xsl:value-of select="/xs:schema/xs:element[1]/xs:annotation/xs:documentation"/><xsl:text>'</xsl:text>
         </xsl:if>
 
         <xsl:text>; &#xa;</xsl:text>
@@ -69,7 +74,7 @@
         <!-- Column comment -->
         <xsl:for-each select="/xs:schema/xs:element[1]/xs:complexType[1]/xs:sequence[1]/xs:element[1]/xs:complexType[1]/xs:attribute" >
             <xsl:if test="xs:annotation/xs:documentation">
-            <xsl:text>  COMMENT ON COLUMN </xsl:text> <xsl:value-of select="$table_name"/> <xsl:text>.</xsl:text><xsl:value-of select="normalize-space(@name)"/><xsl:text> IS </xsl:text>
+            <xsl:text>  COMMENT ON COLUMN "</xsl:text><xsl:value-of select="$schema"/><xsl:text>"."</xsl:text><xsl:value-of select="$table_name"/><xsl:text>"."</xsl:text><xsl:value-of select="normalize-space(@name)"/><xsl:text>" IS </xsl:text>
             <xsl:choose>
                     <xsl:when test="contains(xs:annotation/xs:documentation,'&#xa;')">
                         <xsl:text>'</xsl:text><xsl:value-of select="substring-before(xs:annotation/xs:documentation,'&#xa;')"/><xsl:text>'</xsl:text>
@@ -85,5 +90,7 @@
         <!-- separate table definitions -->
         <xsl:text>&#xa;</xsl:text>
     </xsl:template>
+
+    <xsl:template name="create_index"/>
 
 </xsl:stylesheet>

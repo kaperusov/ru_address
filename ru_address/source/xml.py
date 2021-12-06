@@ -138,7 +138,6 @@ class DataHandler(sax.ContentHandler):
 
         self.current_row += 1
 
-
         # Вывод прогресса
         current_percent = math.ceil(self.source.percentage)
         if current_percent > self.processed_percent:
@@ -158,7 +157,8 @@ class DataHandler(sax.ContentHandler):
 
 
 class Definition:
-    def __init__(self, table_name, source_file, target):
+    def __init__(self, schema, table_name, source_file, target):
+        self.schema = schema
         self.table_name = table_name
         self.tree = et.parse(source_file)
         self.stylesheet_file = os.path.join(package_directory, 'resources', target, 'definition.xsl')
@@ -191,8 +191,9 @@ class Definition:
         stylesheet = et.parse(self.stylesheet_file)
         transform = et.XSLT(stylesheet)
 
+        plain_schema_name = transform.strparam(self.schema)
         plain_table_name = transform.strparam(self.table_name)
         index = transform.strparam(Index(self.target).build(self.table_name))
-        result = transform(self.tree, table_name=plain_table_name, index=index)
+        result = transform(self.tree, schema=plain_schema_name, table_name=plain_table_name, index=index)
 
         dump_file.write(str(result))

@@ -51,19 +51,19 @@ class Converter:
         else:
             raise FileNotFoundError('Not found source file: {}'.format(file_path))
 
-    def convert_table(self, file, table, target, skip_definition, skip_data, batch_size):
+    def convert_table(self, file, schema, table, target, skip_definition, skip_data, batch_size):
         """ Конвертирует схему и данные таблицы, используя соответствующие XSD и XML файлы. """
         if self.source == self.SOURCE_XML:
-            self._convert_table_xml(file, table, target, skip_definition, skip_data, batch_size)
+            self._convert_table_xml(file, schema, table, target, skip_definition, skip_data, batch_size)
         elif self.source == self.SOURCE_DBF:
-            self._convert_table_dbf(file, table, target, skip_definition, skip_data, batch_size)
+            self._convert_table_dbf(file, schema, table, target, skip_definition, skip_data, batch_size)
 
-    def _convert_table_xml(self, file, table, target, skip_definition, skip_data, batch_size):
+    def _convert_table_xml(self, file, schema, table, target, skip_definition, skip_data, batch_size):
         """ Конвертирует схему и данные таблицы, используя соответствующие XSD и XML файлы. """
         dump_file = file
 
         source_filepath = self.get_source_filepath(table, 'xsd')
-        definition = Definition(table, source_filepath, target)
+        definition = Definition(schema, table, source_filepath, target)
         if skip_definition is False:
             definition.convert_and_dump(dump_file)
 
@@ -75,7 +75,7 @@ class Converter:
             else:
                 data.convert_and_dump(dump_file, definition, batch_size)
 
-    def _convert_table_dbf(self, table, target, skip_definition, skip_data, batch_size):
+    def _convert_table_dbf(self, schema, table, target, skip_definition, skip_data, batch_size):
         """ Конвертирует схему и данные таблицы, используя соответствующие XSD и DBF файлы. """
         print('TODO!')
 
@@ -100,25 +100,32 @@ class Converter:
         return header.format(__version__, str(now))
 
     @staticmethod
-    def get_dump_header(encoding):
+    def get_dump_header(target, encoding):
         """ Подготовка к импорту """
-        header = ("/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;\n"
-                  "/*!40101 SET NAMES {} */;\n"
-                  "/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;\n"
-                  "/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;\n")
-        return header.format(encoding)
+        if target == Converter.TARGET_MYSQL:
+            header = ("/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;\n"
+                      "/*!40101 SET NAMES {} */;\n"
+                      "/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;\n"
+                      "/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;\n")
+            return header.format(encoding)
+        elif target == Converter.TARGET_POSTGRES:
+            return ""
 
     @staticmethod
-    def get_dump_footer():
+    def get_dump_footer(target):
         """ Завершение импорта """
-        footer = ("\n/*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;\n"
-                  "/*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;\n"
-                  "/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;")
-        return footer
+        if target == Converter.TARGET_MYSQL:
+            footer = ("\n/*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;\n"
+                      "/*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;\n"
+                      "/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;")
+            return footer
+        elif target == Converter.TARGET_POSTGRES:
+            return ""
 
     @staticmethod
     def get_table_separator(table):
-        return ("\n\n-- Table `{}`\n").format(table)
+        return "\n\n-- Table `{}`\n".format(table)
+
 
 class Output:
     SINGLE_FILE = 0
