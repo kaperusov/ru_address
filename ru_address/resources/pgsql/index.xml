@@ -71,7 +71,7 @@
          <foreign-key field="ROOMTYPE" for-table="ROOMTYPE" for-field="RMTYPEID"/>
     </table>
     <table id="SOCRBASE">
-         <primary-key field="LEVEL"/>
+         <primary-key field="KOD_T_ST"/>
         <key field="SCNAME"/>
     </table>
     <table id="STEAD">
