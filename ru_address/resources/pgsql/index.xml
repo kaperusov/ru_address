@@ -5,6 +5,7 @@
     </table>
     <table id="ADDR_OBJ">
         <primary-key field="ID"/>
+         <foreign-key field="OPERTYPEID" for-table="OPERSTAT" for-field="OPERSTATID"/>
         <key field="OBJECTID"/>
         <key field="OBJECTGUID"/>
         <key field="CHANGEID"/>
@@ -26,6 +27,9 @@
     </table>
 	<table id="HOUSE">
         <primary-key field="HOUSEID"/>
+        <foreign-key field="NORMDOC" for-table="NORMDOC" for-field="NORMDOCID"/>
+        <foreign-key field="ESTSTATUS" for-table="ESTSTAT" for-field="ESTSTATID"/>
+        <foreign-key field="STRSTATUS" for-table="STRSTAT" for-field="STRSTATID"/>
 		<key field="ESTSTATUS" />
 		<key field="NORMDOC" />
 		<key field="STATSTATUS" />
@@ -51,6 +55,7 @@
     </table>
     <table id="NORMDOC">
         <primary-key field="NORMDOCID"/>
+        <foreign-key field="DOCTYPE" for-table="NDOCTYPE" for-field="NDTYPEID"/>
         <key field="DOCTYPE"/>
     </table>
     <table id="OPERSTAT">
@@ -60,14 +65,18 @@
         <primary-key field="RMTYPEID"/>
     </table>
      <table id="ROOM">
-        <primary-key field="ROOMGUID"/>
+        <primary-key field="ROOMID"/>
+         <foreign-key field="NORMDOC" for-table="NORMDOC" for-field="NORMDOCID"/>
+         <foreign-key field="FLATTYPE" for-table="FLATTYPE" for-field="FLTYPEID"/>
+         <foreign-key field="ROOMTYPE" for-table="ROOMTYPE" for-field="RMTYPEID"/>
     </table>
     <table id="SOCRBASE">
-         <primary-key field="KOD_T_ST"/>
+         <primary-key field="LEVEL"/>
         <key field="SCNAME"/>
     </table>
     <table id="STEAD">
         <primary-key field="STEADID"/>
+        <foreign-key field="NORMDOC" for-table="NORMDOC" for-field="NORMDOCID"/>
     </table>
 	<table id="STRSTAT">
         <primary-key field="STRSTATID"/>

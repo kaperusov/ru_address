@@ -6,7 +6,7 @@
     <xsl:param name="table_name" />
 
     <xsl:template match="/">
-        <xsl:text>DROP TABLE IF EXISTS </xsl:text><xsl:value-of select="$table_name"/><xsl:text>;&#xa;</xsl:text>
+        <xsl:text>DROP TABLE IF EXISTS </xsl:text><xsl:value-of select="$table_name"/><xsl:text> CASCADE;&#xa;</xsl:text>
         <xsl:text>CREATE TABLE </xsl:text><xsl:value-of select="$table_name"/><xsl:text> (&#xa;</xsl:text>
         <xsl:for-each select="/xs:schema/xs:element[1]/xs:complexType[1]/xs:sequence[1]/xs:element[1]/xs:complexType[1]/xs:attribute" >
             <!-- Column -->
@@ -14,10 +14,10 @@
 
             <!-- Column Type -->
             <xsl:choose>
+                <xsl:when test="@name='ID'">BIGSERIAL</xsl:when>
                 <xsl:when test="xs:simpleType/xs:restriction/@base='xs:integer' or xs:simpleType/xs:restriction/@base='xs:int'">
                     <xsl:text>INTEGER</xsl:text>
                 </xsl:when>
-                <xsl:when test="@name='ID'">BIGSERIAL</xsl:when>
                 <xsl:when test="xs:simpleType/xs:restriction/@base='xs:byte'">SMALLINT</xsl:when>
                 <xsl:when test="xs:simpleType/xs:restriction/@base='xs:string'"><xsl:text>VARCHAR(</xsl:text>
 
@@ -86,7 +86,4 @@
         <xsl:text>&#xa;</xsl:text>
     </xsl:template>
 
-    <xsl:template name="create_index">
-
-            </xsl:template>
 </xsl:stylesheet>

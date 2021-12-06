@@ -15,21 +15,21 @@ class Converter:
     SOURCE_DBF = 'dbf'
 
     TABLE_LIST = [
-        'ACTSTAT',
-        'ADDR_OBJ',
-        'CENTERST',
-        'CURENTST',
-        'ESTSTAT',
-        'FLATTYPE',
-        'HOUSE',
-        'NDOCTYPE',
-        'NORMDOC',
-        'OPERSTAT',
-        'ROOMTYPE',
-        'ROOM',
-        'SOCRBASE',
-        'STEAD',
-        'STRSTAT'
+       'ACTSTAT',
+       'CENTERST',
+       'CURENTST',
+       'ESTSTAT',
+       'FLATTYPE',
+       'NDOCTYPE',
+       'OPERSTAT',
+       'ROOMTYPE',
+       'SOCRBASE',
+       'STRSTAT',
+       'NORMDOC',
+       'STEAD',
+       'ROOM',
+       'HOUSE',
+       'ADDR_OBJ',
     ]
 
     def __init__(self, source, source_path, beta):
