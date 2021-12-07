@@ -24,7 +24,7 @@ class Data:
     def convert_and_dump_v2(self, dump_file, definition, bulk_size):
 
         # Отключаем ключи перед началом импорта данных
-        print('/*!40000 ALTER TABLE `{}` DISABLE KEYS */;'.format(self.table_name), file=dump_file)
+        print(' ALTER TABLE `{}` DISABLE KEYS */;'.format(self.table_name), file=dump_file)
 
         table_fields = definition.get_table_fields()
         current_row = 0
@@ -90,7 +90,7 @@ class DataHandler(sax.ContentHandler):
         self.bulk_size = bulk_size
 
         # Отключаем ключи перед началом импорта данных
-        print('/*!40000 ALTER TABLE `{}` DISABLE KEYS */;'.format(self.table_name), file=self.dump)
+        print('ALTER TABLE "{}" DISABLE TRIGGER ALL;'.format(self.table_name), file=self.dump)
 
         # Для XML обработчика
         self.tree_depth = 0
@@ -113,7 +113,7 @@ class DataHandler(sax.ContentHandler):
             value = "NULL"
             if attrs.get(field) is not None:
                 value = attrs.get(field).replace('\\', '\\\\"').replace('"', '\\"')
-                value = '"{}"'.format(value)
+                value = '\'{}\''.format(value)
             value_query_parts.append(value)
 
         value_query = ', '.join(value_query_parts)
@@ -130,8 +130,8 @@ class DataHandler(sax.ContentHandler):
 
         # Начинаем новый инсерт, если нужно
         if self.current_row == 0 or until_new_bulk == 0:
-            field_query = "`, `".join(self.table_fields)
-            print('INSERT INTO `{}` (`{}`) VALUES '.format(self.table_name, field_query), file=self.dump)
+            field_query = "\", \"".join(self.table_fields)
+            print('INSERT INTO "{}" ("{}") VALUES '.format(self.table_name, field_query), file=self.dump)
 
         # Данные для вставки, подходящий delimiter ставится у следующей записи
         print('\t({})'.format(value_query), file=self.dump, end="")
@@ -153,7 +153,7 @@ class DataHandler(sax.ContentHandler):
         print("")  # Перенос после прогресс-бара
         print(";", file=self.dump)  # Заканчиваем последний INSERT запрос
         # Вспомогательные запросы на манер бэкапов из phpMyAdmin
-        print('/*!40000 ALTER TABLE `{}` ENABLE KEYS */;'.format(self.table_name), file=self.dump)
+        print('ALTER TABLE "{}" ENABLE TRIGGER ALL;'.format(self.table_name), file=self.dump)
 
 
 class Definition:
