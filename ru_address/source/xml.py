@@ -179,7 +179,8 @@ class Definition:
     def _fetch_entity_tag(self):
         ns = {'xs': 'http://www.w3.org/2001/XMLSchema'}
         element = self.tree.find(".//xs:sequence/xs:element", ns)
-        return element.attrib['name']
+        if element == 'name':
+            return element.attrib['name']
 
     def get_table_fields(self):
         return self.table_fields

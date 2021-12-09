@@ -15,21 +15,46 @@ class Converter:
     SOURCE_DBF = 'dbf'
 
     TABLE_LIST = [
-       'ACTSTAT',
-       'CENTERST',
-       'CURENTST',
-       'ESTSTAT',
-       'FLATTYPE',
-       'NDOCTYPE',
-       'OPERSTAT',
-       'ROOMTYPE',
-       'SOCRBASE',
-       'STRSTAT',
-       'NORMDOC',
-       'STEAD',
-       'ROOM',
-       'HOUSE',
-       'ADDR_OBJ',
+        'ACTSTAT',
+        'CENTERST',
+        'CURENTST',
+        'ESTSTAT',
+        'FLATTYPE',
+        'NDOCTYPE',
+        'OPERSTAT',
+        'ROOMTYPE',
+        'SOCRBASE',
+        'STRSTAT',
+        'NORMDOC',
+        'STEAD',
+        'ROOM',
+        'HOUSE',
+        'ADDROBJ'
+    ]
+
+    TABLE_LIST_GAR = [
+        'NORMATIVE_DOCS_KINDS',
+        'NORMATIVE_DOCS_TYPES',
+        'ROOM_TYPES',
+        'PARAM_TYPES',
+        'OPERATION_TYPES',
+        'OBJECT_LEVELS',
+        'HOUSE_TYPES',
+        'APARTMENT_TYPES',
+        'ADDR_OBJ_TYPES',
+        'NORMATIVE_DOCS',
+        'CHANGE_HISTORY',
+        'ADM_HIERARCHY',
+        'APARTMENTS',
+        'CARPLACES',
+        'ADDR_OBJ_DIVISION',
+        'HOUSES',
+        'MUN_HIERARCHY',
+        'ADDR_OBJ',
+        'PARAM',
+        'REESTR_OBJECTS',
+        'ROOMS',
+        'STEADS'
     ]
 
     def __init__(self, source, source_path, beta):
@@ -47,7 +72,8 @@ class Converter:
         if len(found_files) == 1:
             return found_files[0]
         elif len(found_files) > 1:
-            raise FileNotFoundError('More than one file found: {}'.format(file_path))
+            return found_files[0]
+            # raise FileNotFoundError('More than one file found: {}'.format(file_path))
         else:
             raise FileNotFoundError('Not found source file: {}'.format(file_path))
 
@@ -85,6 +111,8 @@ class Converter:
         table_list = table_list_string.split(',')
         for table in table_list:
             if table not in Converter.TABLE_LIST:
+                raise ValueError('Unknown table "{}"'.format(table))
+            elif table not in Converter.TABLE_LIST_GAR:
                 raise ValueError('Unknown table "{}"'.format(table))
         return table_list
 
@@ -124,7 +152,7 @@ class Converter:
 
     @staticmethod
     def get_table_separator(table):
-        return "\n\n-- Table `{}`\n".format(table)
+        return "\n\n-- Table {}\n".format(table)
 
 
 class Output:

@@ -3,16 +3,6 @@
     <table id="ACTSTAT">
         <primary-key field="ACTSTATID"/>
     </table>
-    <table id="ADDR_OBJ">
-        <primary-key field="ID"/>
-         <foreign-key field="OPERTYPEID" for-table="OPERSTAT" for-field="OPERSTATID"/>
-        <key field="OBJECTID"/>
-        <key field="OBJECTGUID"/>
-        <key field="CHANGEID"/>
-        <key field="OPERTYPEID"/>
-        <key field="PREVID"/>
-        <key field="LEVEL"/>
-    </table>
     <table id="CENTERST">
         <primary-key field="CENTERSTID"/>
     </table>
@@ -80,5 +70,109 @@
     </table>
 	<table id="STRSTAT">
         <primary-key field="STRSTATID"/>
+    </table>
+    <table id="ADDROBJ">
+        <primary-key field="AOID"/>
+        <foreign-key field="ACTSTATUS" for-table="ACTSTAT" for-field="ACTSTATID"/>
+        <foreign-key field="CENTSTATUS" for-table="CENTERST" for-field="CENTERSTID"/>
+        <foreign-key field="CURRSTATUS" for-table="CURENTST" for-field="CURENTSTID"/>
+        <foreign-key field="OPERSTATUS" for-table="OPERSTAT" for-field="OPERSTATID"/>
+        <foreign-key field="NORMDOC" for-table="NORMDOC" for-field="NORMDOCID"/>
+    </table>
+    <table id="ADDR_OBJ">
+        <primary-key field="ID"/>
+        <foreign-key field="OPERTYPEID" for-table="OPERATION_TYPES" for-field="ID"/>
+        <key field="OBJECTID"/>
+        <key field="OBJECTGUID"/>
+        <key field="CHANGEID"/>
+        <key field="OPERTYPEID"/>
+        <key field="PREVID"/>
+        <key field="LEVEL"/>
+    </table>
+    <table id="ADDR_OBJ_DIVISION">
+        <primary-key field="ID"/>
+        <foreign-key field="CHANGEID" for-table="CHANGE_HISTORY" for-field="CHANGEID"/>
+    </table>
+    <table id="ADDR_OBJ_TYPES">
+        <primary-key field="ID"/>
+    </table>
+    <table id="ADM_HIERARCHY">
+        <primary-key field="ID"/>
+                <foreign-key field="CHANGEID" for-table="CHANGE_HISTORY" for-field="CHANGEID"/>
+    </table>
+    <table id="APARTMENT_TYPES">
+        <primary-key field="ID"/>
+    </table>
+    <table id="APARTMENTS">
+        <primary-key field="ID"/>
+        <foreign-key field="CHANGEID" for-table="CHANGE_HISTORY" for-field="CHANGEID"/>
+        <foreign-key field="OPERTYPEID" for-table="OPERATION_TYPES" for-field="ID"/>
+        <foreign-key field="APARTTYPE" for-table="APARTMENT_TYPES" for-field="ID"/>
+    </table>
+    <table id="CARPLACES">
+        <primary-key field="ID"/>
+        <foreign-key field="CHANGEID" for-table="CHANGE_HISTORY" for-field="CHANGEID"/>
+        <foreign-key field="OPERTYPEID" for-table="OPERATION_TYPES" for-field="ID"/>
+    </table>
+    <table id="CHANGE_HISTORY">
+        <primary-key field="CHANGEID"/>
+        <foreign-key field="OPERTYPEID" for-table="OPERATION_TYPES" for-field="ID"/>
+        <foreign-key field="NDOCID" for-table="NORMATIVE_DOCS" for-field="ID"/>
+    </table>
+    <table id="HOUSE_TYPES">
+        <primary-key field="ID"/>
+    </table>
+    <table id="HOUSES">
+        <primary-key field="ID"/>
+        <foreign-key field="CHANGEID" for-table="CHANGE_HISTORY" for-field="CHANGEID"/>
+        <foreign-key field="OPERTYPEID" for-table="OPERATION_TYPES" for-field="ID"/>
+        <foreign-key field="HOUSETYPE" for-table="HOUSE_TYPES" for-field="ID"/>
+    </table>
+    <table id="MUN_HIERARCHY">
+        <primary-key field="ID"/>
+         <foreign-key field="CHANGEID" for-table="CHANGE_HISTORY" for-field="CHANGEID"/>
+    </table>
+    <table id="NORMATIVE_DOCS">
+        <primary-key field="ID"/>
+        <foreign-key field="TYPE" for-table="NORMATIVE_DOCS_TYPES" for-field="ID"/>
+        <foreign-key field="KIND" for-table="NORMATIVE_DOCS_KINDS" for-field="ID"/>
+    </table>
+    <table id="OBJECT_LEVELS">
+        <primary-key field="LEVEL"/>
+    </table>
+    <table id="OPERATION_TYPES">
+        <primary-key field="ID"/>
+    </table>
+    <table id="PARAM">
+        <primary-key field="ID"/>
+        <foreign-key field="CHANGEID" for-table="CHANGE_HISTORY" for-field="CHANGEID"/>
+        <foreign-key field="TYPEID" for-table="PARAM_TYPES" for-field="ID"/>
+    </table>
+    <table id="PARAM_TYPES">
+        <primary-key field="ID"/>
+    </table>
+    <table id="REESTR_OBJECTS">
+        <primary-key field="OBJECTID"/>
+        <foreign-key field="CHANGEID" for-table="CHANGE_HISTORY" for-field="CHANGEID"/>
+        <foreign-key field="LEVELID" for-table="OBJECT_LEVELS" for-field="LEVEL"/>
+    </table>
+    <table id="ROOM_TYPES">
+        <primary-key field="ID"/>
+    </table>
+    <table id="ROOMS">
+        <primary-key field="ID"/>
+        <foreign-key field="CHANGEID" for-table="CHANGE_HISTORY" for-field="CHANGEID"/>
+        <foreign-key field="ROOMTYPE" for-table="ROOM_TYPES" for-field="ID"/>
+        <foreign-key field="OPERTYPEID" for-table="OPERATION_TYPES" for-field="ID"/>
+    </table>
+    <table id="STEADS">
+        <primary-key field="ID"/>
+        <foreign-key field="CHANGEID" for-table="CHANGE_HISTORY" for-field="CHANGEID"/>
+    </table>
+    <table id="NORMATIVE_DOCS_KINDS">
+        <primary-key field="ID"/>
+    </table>
+    <table id="NORMATIVE_DOCS_TYPES">
+        <primary-key field="ID"/>
     </table>
 </database>

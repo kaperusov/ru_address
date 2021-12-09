@@ -17,6 +17,7 @@ from ru_address.common import Common
 @click.option('--schema', type=str,
               help='Specify name of schema for database (PostgreSQL only), default: "fias"',
               default='fias')
+@click.option('--gar', is_flag=True, help='Database GAR in resulting file')
 @click.option('--table-list', type=str, help='Comma-separated string for limiting table list to process')
 @click.option('--no-data', is_flag=True, help='Skip table definition in resulting file')
 @click.option('--no-definition', is_flag=True, help='Skip table data in resulting file')
@@ -25,13 +26,18 @@ from ru_address.common import Common
 @click.argument('source_path', type=click.types.Path(exists=True, file_okay=False, readable=True))
 @click.argument('output_path', type=click.types.Path(exists=True, file_okay=False, readable=True, writable=True))
 @click.version_option(version=__version__)
-def cli(join, source, target, schema, table_list, no_data, no_definition, encoding, beta, source_path, output_path):
+def cli(join, source, target, schema, table_list, no_data, no_definition, encoding, beta, source_path, output_path,
+        gar):
     """ Подготавливает БД ФИАС для использования с SQL.
     XSD файлы и XML выгрузку можно получить на сайте ФНС https://fias.nalog.ru/Updates.aspx
     """
     start_time = time.time()
 
-    process_tables = Converter.TABLE_LIST
+    if gar:
+        process_tables = Converter.TABLE_LIST_GAR
+    else:
+        process_tables = Converter.TABLE_LIST
+
     if table_list is not None:
         process_tables = Converter.prepare_table_input(table_list)
 
