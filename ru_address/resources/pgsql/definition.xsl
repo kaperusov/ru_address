@@ -15,7 +15,7 @@
 
             <!-- Column Type -->
             <xsl:choose>
-                <xsl:when test="@name='ID'">BIGSERIAL</xsl:when>
+                <xsl:when test="@name='ID'">INT8</xsl:when>
                 <xsl:when test="@name='PATH'">VARCHAR</xsl:when>
                 <xsl:when test="xs:simpleType/xs:restriction/@base='xs:integer' or xs:simpleType/xs:restriction/@base='xs:int'">
                     <xsl:text>INTEGER</xsl:text>
@@ -44,6 +44,9 @@
 
             <!-- Column required -->
             <xsl:choose>
+                   <xsl:when test="@name='PATH'">
+                    <xsl:text></xsl:text>
+                </xsl:when>
                 <xsl:when test="@use='required'">
                     <xsl:text> NOT NULL</xsl:text>
                 </xsl:when>
@@ -68,7 +71,7 @@
 
             <!-- Column Type -->
             <xsl:choose>
-                <xsl:when test="@name='ID'">BIGSERIAL</xsl:when>
+                <xsl:when test="@name='ID'">INT8</xsl:when>
                 <xsl:when test="@name='PATH'">VARCHAR</xsl:when>
                 <xsl:when test="xs:simpleType/xs:restriction/@base='xs:integer' or xs:simpleType/xs:restriction/@base='xs:int'">
                     <xsl:text>INTEGER</xsl:text>
@@ -96,6 +99,9 @@
 
             <!-- Column required -->
             <xsl:choose>
+                 <xsl:when test="@name='PATH'">
+                    <xsl:text></xsl:text>
+                </xsl:when>
                 <xsl:when test="@use='required'">
                     <xsl:text> NOT NULL</xsl:text>
                 </xsl:when>
