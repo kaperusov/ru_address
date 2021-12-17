@@ -72,4 +72,4 @@ ru_address: Конвертация БД ФИАС в SQL дамп
 Удаление
 --------
 
-  sudo pip uninstall ru-address && sudo rm /usr/local/bin/ru_address
+  sudo pip uninstall ru-address && sudo rm -f /usr/local/bin/ru_address
