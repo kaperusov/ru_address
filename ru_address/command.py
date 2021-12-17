@@ -14,10 +14,10 @@ from ru_address.common import Common
 @click.option('--target', type=click.Choice([Converter.TARGET_POSTGRES, Converter.TARGET_MYSQL]),
               default=Converter.TARGET_MYSQL,
               help='Target database SQL format')
-@click.option('--schema', type=str,
-              help='Specify name of schema for database (PostgreSQL only), default: "fias"',
-              default='fias')
-@click.option('--gar', is_flag=True, help='Database GAR in resulting file')
+@click.option('--db-schema', type=str, 
+              help='Specify name of schema for database (PostgreSQL only), default: "gar"', 
+              default='gar')
+@click.option('--xsd-schema', type=str, help='Database GAR in resulting file', default='gar')
 @click.option('--table-list', type=str, help='Comma-separated string for limiting table list to process')
 @click.option('--no-data', is_flag=True, help='Skip table definition in resulting file')
 @click.option('--no-definition', is_flag=True, help='Skip table data in resulting file')
@@ -26,17 +26,19 @@ from ru_address.common import Common
 @click.argument('source_path', type=click.types.Path(exists=True, file_okay=False, readable=True))
 @click.argument('output_path', type=click.types.Path(exists=True, file_okay=False, readable=True, writable=True))
 @click.version_option(version=__version__)
-def cli(join, source, target, schema, table_list, no_data, no_definition, encoding, beta, source_path, output_path,
-        gar):
+def cli(join, source, target, xsd_schema, db_schema, table_list, no_data, no_definition, encoding, beta, source_path, output_path):
     """ Подготавливает БД ФИАС для использования с SQL.
     XSD файлы и XML выгрузку можно получить на сайте ФНС https://fias.nalog.ru/Updates.aspx
     """
     start_time = time.time()
 
-    if gar:
+    if xsd_schema == "gar":
         process_tables = Converter.TABLE_LIST_GAR
+    elif xsd_schema == "fias":
+        process_tables = Converter.TABLE_LIST_FIAS
     else:
-        process_tables = Converter.TABLE_LIST
+        print("Неизвестная схема '{}'. Возможные варианты: gar | fias".format(xsd_schema))
+        exit
 
     if table_list is not None:
         process_tables = Converter.prepare_table_input(table_list)
@@ -56,7 +58,7 @@ def cli(join, source, target, schema, table_list, no_data, no_definition, encodi
         for table in process_tables:
             Common.cli_output('Processing table `{}`'.format(table))
             file.write(Converter.get_table_separator(table))
-            converter.convert_table(file=file, target=target, schema=schema, table=table,
+            converter.convert_table(file=file, target=target, schema=db_schema, table=table,
                                     skip_definition=no_definition, skip_data=no_data,
                                     batch_size=500)
 
@@ -70,7 +72,7 @@ def cli(join, source, target, schema, table_list, no_data, no_definition, encodi
             file.write(Converter.get_dump_header(encoding=encoding, target=target))
 
             Common.cli_output('Processing table `{}`'.format(table))
-            converter.convert_table(file=file, target=target, schema=schema, table=table,
+            converter.convert_table(file=file, target=target, schema=db_schema, table=table,
                                     skip_definition=no_definition, skip_data=no_data,
                                     batch_size=500)
 

@@ -14,7 +14,7 @@ class Converter:
     SOURCE_XML = 'xml'
     SOURCE_DBF = 'dbf'
 
-    TABLE_LIST = [
+    TABLE_LIST_FIAS = [
         'ACTSTAT',
         'CENTERST',
         'CURENTST',
@@ -29,7 +29,7 @@ class Converter:
         'STEAD',
         'ROOM',
         'HOUSE',
-        'ADDROBJ'
+        'ADDR_OBJ'
     ]
 
     TABLE_LIST_GAR = [
@@ -110,7 +110,7 @@ class Converter:
         """ Подготавливает переданный через аргумент список таблиц """
         table_list = table_list_string.split(',')
         for table in table_list:
-            if table not in Converter.TABLE_LIST:
+            if table not in Converter.TABLE_LIST_FIAS:
                 raise ValueError('Unknown table "{}"'.format(table))
             elif table not in Converter.TABLE_LIST_GAR:
                 raise ValueError('Unknown table "{}"'.format(table))
