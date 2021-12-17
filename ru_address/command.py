@@ -11,9 +11,9 @@ from ru_address.common import Common
 @click.option('--join', type=str, help='Join dump into single file with given filename')
 @click.option('--source', type=click.Choice([Converter.SOURCE_XML, Converter.SOURCE_DBF]), default=Converter.SOURCE_XML,
               help='Data source file format')
-@click.option('--target', type=click.Choice([Converter.TARGET_POSTGRES, Converter.TARGET_MYSQL]),
-              default=Converter.TARGET_MYSQL,
-              help='Target database SQL format')
+@click.option('--sql-syntax', type=click.Choice([Converter.SQL_SYNTAX_PGSQL, Converter.SQL_SYNTAX_MYSQL]),
+              help='Database SQL syntax (default "pgsql")',
+              default=Converter.SQL_SYNTAX_PGSQL)
 @click.option('--db-schema', type=str, 
               help='Specify name of schema for database (PostgreSQL only), default: "gar"', 
               default='gar')
@@ -26,7 +26,7 @@ from ru_address.common import Common
 @click.argument('source_path', type=click.types.Path(exists=True, file_okay=False, readable=True))
 @click.argument('output_path', type=click.types.Path(exists=True, file_okay=False, readable=True, writable=True))
 @click.version_option(version=__version__)
-def cli(join, source, target, xsd_schema, db_schema, table_list, no_data, no_definition, encoding, beta, source_path, output_path):
+def cli(join, source, sql_syntax, xsd_schema, db_schema, table_list, no_data, no_definition, encoding, beta, source_path, output_path):
     """ Подготавливает БД ФИАС для использования с SQL.
     XSD файлы и XML выгрузку можно получить на сайте ФНС https://fias.nalog.ru/Updates.aspx
     """
@@ -53,30 +53,30 @@ def cli(join, source, target, xsd_schema, db_schema, table_list, no_data, no_def
     if mode == Output.SINGLE_FILE:
         file = output.open_dump_file(join)
         file.write(Converter.get_dump_copyright())
-        file.write(Converter.get_dump_header(encoding=encoding, target=target))
+        file.write(Converter.get_dump_header(encoding=encoding, sql_syntax=sql_syntax))
 
         for table in process_tables:
             Common.cli_output('Processing table `{}`'.format(table))
             file.write(Converter.get_table_separator(table))
-            converter.convert_table(file=file, target=target, schema=db_schema, table=table,
+            converter.convert_table(file=file, sql_syntax=sql_syntax, schema=db_schema, table=table,
                                     skip_definition=no_definition, skip_data=no_data,
                                     batch_size=500)
 
-        file.write(Converter.get_dump_footer(target=target))
+        file.write(Converter.get_dump_footer(sql_syntax=sql_syntax))
         file.close()
 
     elif mode == Output.FILE_PER_TABLE:
         for table in process_tables:
             file = output.open_dump_file(output.get_table_filename(table))
             file.write(Converter.get_dump_copyright())
-            file.write(Converter.get_dump_header(encoding=encoding, target=target))
+            file.write(Converter.get_dump_header(encoding=encoding, sql_syntax=sql_syntax))
 
             Common.cli_output('Processing table `{}`'.format(table))
-            converter.convert_table(file=file, target=target, schema=db_schema, table=table,
+            converter.convert_table(file=file, sql_syntax=sql_syntax, schema=db_schema, table=table,
                                     skip_definition=no_definition, skip_data=no_data,
                                     batch_size=500)
 
-            file.write(Converter.get_dump_footer(target=target))
+            file.write(Converter.get_dump_footer(sql_syntax=sql_syntax))
             file.close()
 
     Common.show_memory_usage()
