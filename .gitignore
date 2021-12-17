@@ -70,5 +70,8 @@ __trash/
 test.py
 
 # Output files
-fias/*.xsd
+data/
+schemas/
+fias/
+gar/
 **/*.sql
