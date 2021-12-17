@@ -8,27 +8,37 @@ from ru_address.common import Common
 
 
 @click.command()
-@click.option('--join', type=str, help='Join dump into single file with given filename')
-@click.option('--source', type=click.Choice([Converter.SOURCE_XML, Converter.SOURCE_DBF]), default=Converter.SOURCE_XML,
-              help='Data source file format')
+@click.option('--join', type=str, 
+              help='Опция позволяет объединить весь дамп в один файл (по умолчанию отдельный файл для каждой таблицы).\n\n ')
+@click.option('--source', type=click.Choice([Converter.SOURCE_XML, Converter.SOURCE_DBF]), 
+              help='Формат источника данных.\n\nВозможные варианты: xml | dbf.\n\nПо умолчанию "xml". "dbf" пока не реализован.\n\n ',
+              default=Converter.SOURCE_XML)
 @click.option('--sql-syntax', type=click.Choice([Converter.SQL_SYNTAX_PGSQL, Converter.SQL_SYNTAX_MYSQL]),
-              help='Database SQL syntax (default "pgsql")',
+              help='SQL формат выходных файлов (по умолчанию "pgsql").\n\n ',
               default=Converter.SQL_SYNTAX_PGSQL)
 @click.option('--db-schema', type=str, 
-              help='Specify name of schema for database (PostgreSQL only), default: "gar"', 
+              help='Имя схемы в БД (только PostgreSQL), по умолчанию: "gar").\n\n ', 
               default='gar')
-@click.option('--xsd-schema', type=str, help='Database GAR in resulting file', default='gar')
-@click.option('--table-list', type=str, help='Comma-separated string for limiting table list to process')
-@click.option('--no-data', is_flag=True, help='Skip table definition in resulting file')
-@click.option('--no-definition', is_flag=True, help='Skip table data in resulting file')
-@click.option('--encoding', type=str, default='utf8mb4', help='Default table encoding')
-@click.option('--beta', is_flag=True, help='Check unstable methods')
+@click.option('--xsd-schema', type=str, 
+              help='Тип XSD схемы. Возможные варианты: gar | fias. (По умолчанию: "gar").\n\n ', 
+              default='gar')
+@click.option('--table-list', type=str, 
+              help='Список таблиц для обработки, указывается строкой с разделением запятой.\n\n ')
+@click.option('--no-data', is_flag=True, 
+              help='Не генерировать в результирующем файле инструкуции для вставки данных в таблицы.\n\n ')
+@click.option('--no-definition', is_flag=True, 
+              help='Пропустить создание схемы.\n\n ')
+@click.option('--encoding', type=str, default='utf8mb4', 
+              help='Кодировка таблицы, по умолчанию "utf8mb4" (только для MySQL).\n\n ')
+@click.option('--beta', is_flag=True, help='Отладочный флаг. Для проверки работы методов.\n\n ')
 @click.argument('source_path', type=click.types.Path(exists=True, file_okay=False, readable=True))
 @click.argument('output_path', type=click.types.Path(exists=True, file_okay=False, readable=True, writable=True))
 @click.version_option(version=__version__)
 def cli(join, source, sql_syntax, xsd_schema, db_schema, table_list, no_data, no_definition, encoding, beta, source_path, output_path):
     """ Подготавливает БД ФИАС для использования с SQL.
     XSD файлы и XML выгрузку можно получить на сайте ФНС https://fias.nalog.ru/Updates.aspx
+
+    Для автоматицации выгрузки, можно воспользоваться shell-скриптом: download_schemas.sh
     """
     start_time = time.time()
 
