@@ -69,6 +69,14 @@ target/
 __trash/
 test.py
 
+# Archives
+*.zip
+*.arj
+*.rar
+*.7z
+*.tar.*
+*.tgz
+
 # Output files
 data/
 schemas/
