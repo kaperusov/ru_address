@@ -66,14 +66,13 @@ class Converter:
         """ Ищем файл таблицы в папке с исходниками, 
         Названия файлов в непонятном формате, например AS_ACTSTAT_2_250_08_04_01_01.xsd
         """
-        file = 'AS_{}_*.{}'.format(table, extension)
+        file = 'AS_{}_[0-9]*.{}'.format(table, extension)
         file_path = os.path.join(self.source_path, file)
         found_files = glob.glob(file_path)
         if len(found_files) == 1:
             return found_files[0]
         elif len(found_files) > 1:
-            return found_files[0]
-            # raise FileNotFoundError('More than one file found: {}'.format(file_path))
+            raise FileNotFoundError('More than one file found: {}'.format(file_path))
         else:
             raise FileNotFoundError('Not found source file: {}'.format(file_path))
 
