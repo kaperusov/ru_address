@@ -23,12 +23,12 @@
 					<xsl:text>PRIMARY KEY ("</xsl:text><xsl:value-of select="@field"/><xsl:text>"))</xsl:text>
 				</xsl:when>
 				<xsl:when test="name(current()) = 'foreign-key'">
-					<xsl:text>ALTER TABLE "</xsl:text><xsl:value-of select="$table_name"/><xsl:text>" ADD FOREIGN KEY ("</xsl:text><xsl:value-of select="@field"/><xsl:text>")</xsl:text>
-					<xsl:text> REFERENCES "</xsl:text><xsl:value-of select="@for-table"/><xsl:text>" ("</xsl:text><xsl:value-of select="@for-field"/><xsl:text>")</xsl:text>
+					<xsl:text>ALTER TABLE "</xsl:text><xsl:value-of select="$schema"/><xsl:text>"."</xsl:text><xsl:value-of select="$table_name"/><xsl:text>" ADD FOREIGN KEY ("</xsl:text><xsl:value-of select="@field"/><xsl:text>")</xsl:text>
+					<xsl:text> REFERENCES "</xsl:text><xsl:value-of select="$schema"/><xsl:text>"."</xsl:text><xsl:value-of select="@for-table"/><xsl:text>" ("</xsl:text><xsl:value-of select="@for-field"/><xsl:text>")</xsl:text>
 				</xsl:when>
 
 				<xsl:when test="name(current()) = 'key'">
-					<xsl:text>CREATE INDEX ON "</xsl:text><xsl:value-of select="$table_name"/><xsl:text>" ("</xsl:text><xsl:value-of select="@field"/><xsl:text>")</xsl:text>
+					<xsl:text>CREATE INDEX ON "</xsl:text><xsl:value-of select="$schema"/><xsl:text>"."</xsl:text><xsl:value-of select="$table_name"/><xsl:text>" ("</xsl:text><xsl:value-of select="@field"/><xsl:text>")</xsl:text>
 				</xsl:when>
 			</xsl:choose>
 

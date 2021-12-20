@@ -194,7 +194,7 @@ class Definition:
 
         plain_schema_name = transform.strparam(self.schema)
         plain_table_name = transform.strparam(self.table_name)
-        index = transform.strparam(Index(self.target).build(self.table_name))
+        index = transform.strparam(Index(self.target, self.schema).build(self.table_name))
         result = transform(self.tree, schema=plain_schema_name, table_name=plain_table_name, index=index)
 
         dump_file.write(str(result))
