@@ -127,7 +127,7 @@ class Converter:
         return header.format(__version__, str(now))
 
     @staticmethod
-    def get_dump_header(sql_syntax, encoding):
+    def get_dump_header(sql_syntax, encoding, schema):
         """ Подготовка к импорту """
         if sql_syntax == Converter.SQL_SYNTAX_MYSQL:
             header = ("/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;\n"
@@ -136,7 +136,8 @@ class Converter:
                       "/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;\n")
             return header.format(encoding)
         elif sql_syntax == Converter.SQL_SYNTAX_PGSQL:
-            return ""
+            header = "\nCREATE SCHEMA IF NOT EXISTS \"{}\";\n"
+            return header.format(schema)
 
     @staticmethod
     def get_dump_footer(sql_syntax):

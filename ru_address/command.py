@@ -63,7 +63,7 @@ def cli(join, source, sql_syntax, xsd_schema, db_schema, table_list, no_data, no
     if mode == Output.SINGLE_FILE:
         file = output.open_dump_file(join)
         file.write(Converter.get_dump_copyright())
-        file.write(Converter.get_dump_header(encoding=encoding, sql_syntax=sql_syntax))
+        file.write(Converter.get_dump_header(encoding=encoding, sql_syntax=sql_syntax, schema=db_schema))
 
         for table in process_tables:
             Common.cli_output('Processing table `{}`'.format(table))
