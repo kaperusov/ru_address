@@ -5,6 +5,7 @@ import datetime
 from ru_address.source.xml import Definition
 from ru_address.source.xml import Data
 from ru_address._version import __version__
+from ru_address._version import __repo_url__
 
 
 class Converter:
@@ -120,11 +121,11 @@ class Converter:
         """ Сообщение в заголовок сгенерированного файла """
         header = ("-- --------------------------------------------------------\n"
                   "-- ver. {}\n"
-                  "-- get latest version @ https://github.com/shadz3rg/ru_address\n"
+                  "-- get latest version @ {}\n"
                   "-- file generated {}\n"
                   "-- --------------------------------------------------------\n\n")
         now = datetime.datetime.now()
-        return header.format(__version__, str(now))
+        return header.format(__version__, __repo_url__, str(now))
 
     @staticmethod
     def get_dump_header(sql_syntax, encoding, schema):
