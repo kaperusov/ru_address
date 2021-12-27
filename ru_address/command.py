@@ -42,16 +42,9 @@ def cli(join, source, sql_syntax, xsd_schema, db_schema, table_list, no_data, no
     """
     start_time = time.time()
 
-    if xsd_schema == "gar":
-        process_tables = Converter.TABLE_LIST_GAR
-    elif xsd_schema == "fias":
-        process_tables = Converter.TABLE_LIST_FIAS
-    else:
-        print("Неизвестная схема '{}'. Возможные варианты: gar | fias".format(xsd_schema))
-        exit
-
-    if table_list is not None:
-        process_tables = Converter.prepare_table_input(table_list)
+    process_tables = Converter.prepare_table_input(table_list, xsd_schema)
+    if len(process_tables) == 0:
+        exit()
 
     mode = Output.FILE_PER_TABLE
     if join is not None:
@@ -76,10 +69,16 @@ def cli(join, source, sql_syntax, xsd_schema, db_schema, table_list, no_data, no
         file.close()
 
     elif mode == Output.FILE_PER_TABLE:
+        if xsd_schema == "gar":
+            table_list = Converter.TABLE_LIST_GAR
+        elif xsd_schema == "fias":
+            table_list = Converter.TABLE_LIST_FIAS
+
         for table in process_tables:
-            file = output.open_dump_file(output.get_table_filename(table))
+            index = table_list.index(table)
+            file = output.open_dump_file(output.get_table_filename(index=index, table=table))
             file.write(Converter.get_dump_copyright())
-            file.write(Converter.get_dump_header(encoding=encoding, sql_syntax=sql_syntax))
+            file.write(Converter.get_dump_header(encoding=encoding, sql_syntax=sql_syntax, schema=db_schema))
 
             Common.cli_output('Processing table `{}`'.format(table))
             converter.convert_table(file=file, sql_syntax=sql_syntax, schema=db_schema, table=table,

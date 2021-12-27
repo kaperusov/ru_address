@@ -9,14 +9,17 @@ from ru_address.index import Index
 
 
 class Data:
-    def __init__(self, table_name, source_file):
+    def __init__(self, db_schema, table_name, source_file, sql_syntax):
+        self.db_schema = db_schema
         self.table_name = table_name
         self.data_source = source_file
+        self.sql_syntax = sql_syntax
 
     def convert_and_dump(self, dump_file, definition, bulk_size):
         source = DataSource(self.data_source)
         parser = sax.make_parser()
-        parser.setContentHandler(DataHandler(self.table_name, source, dump_file, definition.get_table_fields(), bulk_size))
+        parser.setContentHandler(DataHandler(self.db_schema, self.table_name, source, dump_file,
+                                             definition.get_table_fields(), self.sql_syntax, bulk_size))
         parser.parse(source)
 
         source.close()
@@ -81,16 +84,19 @@ class Data:
 
 
 class DataHandler(sax.ContentHandler):
-    def __init__(self, table_name, source, dump, table_fields, bulk_size):
+    def __init__(self, db_schema, table_name, source, dump, table_fields, sql_syntax, bulk_size):
         super().__init__()
+        self.db_schema = db_schema
         self.table_name = table_name
         self.source = source
         self.dump = dump
         self.table_fields = table_fields
         self.bulk_size = bulk_size
+        self.sql_syntax = sql_syntax
 
         # Отключаем ключи перед началом импорта данных
-        print('ALTER TABLE "{}" DISABLE TRIGGER ALL;'.format(self.table_name), file=self.dump)
+        print('ALTER TABLE "{}"."{}" DISABLE TRIGGER ALL;'
+              .format(self.db_schema, self.table_name), file=self.dump)
 
         # Для XML обработчика
         self.tree_depth = 0
@@ -112,7 +118,11 @@ class DataHandler(sax.ContentHandler):
             # Достаточно удалить двойные т.к. в них оборачиваются SQL данные
             value = "NULL"
             if attrs.get(field) is not None:
-                value = attrs.get(field).replace('\\', '\\\\"').replace('"', '\\"')
+                value = attrs.get(field)\
+                    .replace('\\', '\\\\"')\
+                    .replace('"', '\\"')\
+                    .replace('\r\n', '\\r\\n')\
+                    .replace('\n', '\\n')
                 value = '\'{}\''.format(value)
             value_query_parts.append(value)
 
@@ -131,7 +141,8 @@ class DataHandler(sax.ContentHandler):
         # Начинаем новый инсерт, если нужно
         if self.current_row == 0 or until_new_bulk == 0:
             field_query = "\", \"".join(self.table_fields)
-            print('INSERT INTO "{}" ("{}") VALUES '.format(self.table_name, field_query), file=self.dump)
+            print('INSERT INTO "{}"."{}" ("{}") VALUES '
+                  .format(self.db_schema, self.table_name, field_query), file=self.dump)
 
         # Данные для вставки, подходящий delimiter ставится у следующей записи
         print('\t({})'.format(value_query), file=self.dump, end="")
@@ -153,7 +164,8 @@ class DataHandler(sax.ContentHandler):
         print("")  # Перенос после прогресс-бара
         print(";", file=self.dump)  # Заканчиваем последний INSERT запрос
         # Вспомогательные запросы на манер бэкапов из phpMyAdmin
-        print('ALTER TABLE "{}" ENABLE TRIGGER ALL;'.format(self.table_name), file=self.dump)
+        print('ALTER TABLE "{}"."{}" ENABLE TRIGGER ALL;'
+              .format(self.db_schema, self.table_name), file=self.dump)
 
 
 class Definition:

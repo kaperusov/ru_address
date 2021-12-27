@@ -77,6 +77,15 @@ class Converter:
         else:
             raise FileNotFoundError('Not found source file: {}'.format(file_path))
 
+    def get_data_filepaths(self, table, extension):
+        """ Ищем файлы с данными в папке с исходниками,
+        Названия файлов в формате вида: 04/AS_ADDR_OBJ_DIVISION_20211203_3ba54d31-44ed-4410-8b4d-c40f42ec05e9.XML
+        """
+        file = '**/AS_{}_[0-9]*.{}'.format(table, extension)
+        file_path = os.path.join(self.source_path, file)
+        found_files = glob.glob(file_path, recursive=True)
+        return found_files
+
     def convert_table(self, file, schema, table, sql_syntax, skip_definition, skip_data, batch_size):
         """ Конвертирует схему и данные таблицы, используя соответствующие XSD и XML файлы. """
         if self.source == self.SOURCE_XML:
@@ -94,26 +103,41 @@ class Converter:
             definition.convert_and_dump(dump_file)
 
         if skip_data is False:
-            source_filepath = self.get_source_filepath(table, 'xml')
-            data = Data(table, source_filepath)
-            if self.beta:
-                data.convert_and_dump_v2(dump_file, definition, batch_size)
-            else:
-                data.convert_and_dump(dump_file, definition, batch_size)
+            try:
+                paths = self.get_data_filepaths(table, 'XML')
+                for source_filepath in paths:
+                    data = Data(sql_syntax=sql_syntax, db_schema=schema, table_name=table, source_file=source_filepath)
+                    if self.beta:
+                        data.convert_and_dump_v2(dump_file, definition, batch_size)
+                    else:
+                        data.convert_and_dump(dump_file, definition, batch_size)
+            except FileNotFoundError as err:
+                print(err)
 
     def _convert_table_dbf(self, schema, table, sql_syntax, skip_definition, skip_data, batch_size):
         """ Конвертирует схему и данные таблицы, используя соответствующие XSD и DBF файлы. """
         print('TODO!')
 
     @staticmethod
-    def prepare_table_input(table_list_string):
+    def prepare_table_input(table_list_string, xsd_schema):
         """ Подготавливает переданный через аргумент список таблиц """
-        table_list = table_list_string.split(',')
-        for table in table_list:
-            if table not in Converter.TABLE_LIST_FIAS:
-                raise ValueError('Unknown table "{}"'.format(table))
-            elif table not in Converter.TABLE_LIST_GAR:
-                raise ValueError('Unknown table "{}"'.format(table))
+
+        if xsd_schema == "gar":
+            table_list = Converter.TABLE_LIST_GAR
+        elif xsd_schema == "fias":
+            table_list = Converter.TABLE_LIST_FIAS
+        else:
+            print("Неизвестная схема '{}'. Возможные варианты: gar | fias".format(xsd_schema))
+            return []
+
+        if table_list_string is not None:
+            process_tables = table_list_string.split(',')
+            for table in process_tables:
+                if table not in table_list:
+                    raise ValueError('Unknown table "{}"'.format(table))
+            if process_tables is not None:
+                return process_tables
+
         return table_list
 
     @staticmethod
@@ -164,8 +188,9 @@ class Output:
         self.output_path = output_path
         self.mode = mode
 
-    def get_table_filename(self, table):
-        return '{}.{}'.format(table, 'sql')
+    @staticmethod
+    def get_table_filename(index, table):
+        return '{:03d}_{}.{}'.format(index, table, 'sql')
 
     def open_dump_file(self, filename):
         filepath = os.path.join(self.output_path, filename)
